@@ -6,9 +6,8 @@ from mago import Mago
 from ladino import Ladino
 from clerigo import Clerigo
 
-# comentario teste versionamento
+# Comentário de versão, testes etc.
 bonusProeficiencia = 3
-
 
 class Personagem:
     def __init__(self, nome, classe):
@@ -24,9 +23,14 @@ class Personagem:
             self.classe = Ladino()
         elif classe == "Clerigo":
             self.classe = Clerigo()
+        else:
+            print("Classe não reconhecida!")
 
     def ataqueRecebido(self, msg):
-
+        """
+        Processa o ataque recebido, considerando se o inimigo acertou ou não
+        e calculando o dano.
+        """
         if msg[:2] == "AD" and int(msg[2:4]) > self.getTeste(msg[4:7]):
             dano = int(msg[7:9])
         elif msg[:2] == "AM" and int(msg[2:4]) > self.classe.CA:
@@ -34,6 +38,7 @@ class Personagem:
         else:
             print("Seu inimigo errou o ATAQUE, seu D20 foi: ", msg[2:4])
             dano = 0
+
         print("DANO RECEBIDO : ", dano)
         nova_vida = self.getVida() - dano
         self.setVida(nova_vida)
@@ -45,16 +50,21 @@ class Personagem:
     def setVida(self, novaVida):
         self.classe.HP = novaVida
 
+    def getTeste(self, habilidade):
+        # Aqui você pode adicionar o cálculo do teste (ex: baseado em atributo)
+        return random.randint(1, 20) + habilidade  # Exemplo simples com D20 e habilidade
 
 def main():
-
+    # Configurando o servidor
     socketConexao = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     endereco = ("127.0.0.1", 50000)
     socketConexao.bind(endereco)
     socketConexao.listen(1)
 
+    # Espera por um cliente (Jogador)
     [jogador, _] = socketConexao.accept()
 
+    # Criando o personagem do servidor
     personagem1 = Personagem(
         input("Digite o nome do Personagem 1: "),
         input("Digite a classe do Personagem 1: "),
@@ -65,34 +75,32 @@ def main():
     while not encerrado:
         print("Sua vez")
 
-        msg = personagem1.classe.ataqueAcerto()  # Atacando o Inimigo,
+        # Aqui o personagem faz o ataque
+        msg = personagem1.classe.ataqueAcerto()  # Exemplo de ataque
+        jogador.send(msg.encode())  # Envia a mensagem de ataque (ex: 'AD18 30')
 
-        jogador.send(
-            msg.encode()
-        )  # enviar teste ou D20 e o dano, msg = 'AD' + '18' + '30'
-
-        retorno = jogador.recv(1)  # mensagem
-
+        retorno = jogador.recv(1)  # Recebe o retorno (se for 'D' ou 'V')
         if not retorno:
             sys.exit(-1)
+
         retorno = retorno.decode()
 
         if retorno == "D":
-            acaoInimigo = jogador.recv(9)  # teste ou D20 e o Dano
+            acaoInimigo = jogador.recv(9)  # Recebe o ataque do inimigo
             acaoInimigo = acaoInimigo.decode()
 
-            hpRestante = personagem1.ataqueRecebido(acaoInimigo)
+            hpRestante = personagem1.ataqueRecebido(acaoInimigo)  # Calcula o dano
             print("Seu HP restante: ", hpRestante)
+
             if hpRestante <= 0:
-                jogador.send("V".encode())
+                jogador.send("V".encode())  # Envia 'V' para indicar que o inimigo venceu
                 encerrado = True
                 break
-            # msg = 'AD' + '18' + '30'
+
         elif retorno == "V":
             print(f"{personagem1.nome} venceu!")
             encerrado = True
             break
-
 
 if __name__ == "__main__":
     main()
