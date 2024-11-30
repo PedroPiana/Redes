@@ -31,6 +31,8 @@ class Personagem:
             dano = int(msg[7:9])
         elif msg[:2] == "AM" and int(msg[2:4]) > self.classe.CA:  
             dano = int(msg[4:6])
+        elif msg[:2] == "ES":  # Verificando se é um ataque especial
+            print(f"O inimigo usou uma habilidade especial!")
         else:
             print("Seu inimigo errou o ATAQUE, seu D20 foi: ", msg[2:4])
             dano = 0
