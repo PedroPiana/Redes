@@ -80,9 +80,18 @@ def main():
     while not encerrado:
         print("Sua vez")
 
-        # Aqui o personagem faz o ataque
-        msg = personagem1.classe.ataqueAcerto()  # Exemplo de ataque
-        jogador.send(msg.encode())  # Envia a mensagem de ataque (ex: 'AD18 30')
+        # Aqui o servidor escolhe entre ataque normal ou especial
+        escolha = input("Digite 'A' para atacar ou 'E' para usar especial: ").strip().upper()
+        if escolha == 'A':
+            msg = personagem2.classe.ataqueAcerto()  # Atacar inimigo
+            jogador.send(msg.encode())  # Envia a mensagem de ataque
+        elif escolha == 'E':
+            # Usando o especial da classe
+            msg_especial = personagem2.especial()
+            jogador.send(msg_especial.encode())  # Envia a mensagem do especial
+            print(f"{personagem2.nome} usou seu especial!")
+
+        jogador.send(msg.encode())  # Envia a mensagem de ataque (ex: 'AD18 30' ou 'ES15 30')
 
         retorno = jogador.recv(1)  # Recebe o retorno (se for 'D' ou 'V')
         if not retorno:
