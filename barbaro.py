@@ -18,3 +18,9 @@ class Barbaro:
         # A mensagem de ataque agora inclui o valor correto do dano
         msg = 'D' + 'AM' + str(random.randint(1, 20)).zfill(2) + str(auxiliar)
         return msg
+
+    def getVida(self):
+        return self.HP
+    
+    def setVida(self, novaVida):
+        self.HP = novaVida
