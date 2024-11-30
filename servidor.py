@@ -50,6 +50,10 @@ class Personagem:
     def setVida(self, novaVida):
         self.classe.HP = novaVida
 
+    def especial(self):
+        # Chama o especial da classe
+        return self.classe.usarEspecial()
+
     def getTeste(self, habilidade):
         return random.randint(1, 20) 
 
