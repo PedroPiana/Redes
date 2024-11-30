@@ -51,8 +51,7 @@ class Personagem:
         self.classe.HP = novaVida
 
     def getTeste(self, habilidade):
-        # Aqui você pode adicionar o cálculo do teste (ex: baseado em atributo)
-        return random.randint(1, 20) + habilidade  # Exemplo simples com D20 e habilidade
+        return random.randint(1, 20) 
 
 def main():
     # Configurando o servidor
