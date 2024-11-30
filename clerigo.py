@@ -17,6 +17,12 @@ class Clerigo:
             dano = random.randint(1, self.dano_magico)
             return f"{tipo_ataque}{d20:02d}{dano:02d}"
 
+    def especial(self):
+        cura = random.randint(1, 20) + 3
+        self.HP = self.HP + cura
+        print(f"{self.__class__.__name__} usou CURA e recuperou {cura} pontos de vida! Vida atual: {self.HP}")
+
+    
     def getVida(self):
         return self.HP
     
